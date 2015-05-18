@@ -119,6 +119,7 @@ add_sample(divide_conquer/divide_conquer)
 add_sample(red_rows_until_pred/red_rows_until_pred)
 add_sample(search_in_sorted_tree/search_in_sorted_tree)
 add_sample(gen_new_iter_space/gen_new_iter_space)
+add_sample(empty_task)
 # distCnC only examples
 if(DIST_CNC)
   add_sample(matrix_inverse/matrix_inverse_distenv)

@@ -30,50 +30,35 @@
 
 #define _CRT_SECURE_NO_DEPRECATE // to keep the VS compiler happy with TBB
 
-// let's use a large type to store fib numbers
-typedef unsigned long long fib_type;
-
 #include "empty_task.h"
+#include <chrono>
 
-// the actual step code computing the fib numbers goes here
-int fib_step::execute( const int & tag, fib_context & ctxt ) const
+int empty_step::execute(const int &tag, empty_context &context) const
 {
-    switch( tag ) {
-        case 0 : ctxt.m_fibs.put( tag, 0 ); break;
-        case 1 : ctxt.m_fibs.put( tag, 1 ); break;
-        default : 
-            // get previous 2 results
-            fib_type f_1; ctxt.m_fibs.get( tag - 1, f_1 );
-            fib_type f_2; ctxt.m_fibs.get( tag - 2, f_2 );
-            // put our result
-            ctxt.m_fibs.put( tag, f_1 + f_2 );
-    }
     return CnC::CNC_Success;
 }
 
-int main( int argc, char* argv[] )
+int main()
 {
-    int n = 42;
-    // eval command line args
-    if( argc < 2 ) {
-        std::cerr << "usage: " << argv[0] << " n\nUsing default value " << n << std::endl;
-    } else n = atol( argv[1] );
+	const int n = 10000000;
+
+    CnC::debug::set_num_threads(4);
 
     // create context
-    fib_context ctxt;
+    empty_context context;
+
+	auto start = std::chrono::high_resolution_clock::now();
 
     // put tags to initiate evaluation
-    for( int i = 0; i <= n; ++i ) ctxt.m_tags.put( i );
+    for (int i = 0; i <= n; ++i) 
+		context.tags.put( i );
 
     // wait for completion
-    ctxt.wait(); 
+    context.wait(); 
 
-    // get result
-    fib_type res2;
-    ctxt.m_fibs.get( n, res2 );
-
-    // print result
-    std::cout << "fib (" << n << "): " << res2 << std::endl;
+	auto end = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	std::cout << "elapsed time: " << elapsed_seconds.count() << " sec" << std::endl;
 
     return 0;
 }

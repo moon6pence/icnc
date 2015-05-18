@@ -24,49 +24,39 @@
 // arising in any way out of the use of this software, even if advised of       **
 // the possibility of such damage.                                              **
 //********************************************************************************
-#ifndef fib_H_ALREADY_INCLUDED
-#define fib_H_ALREADY_INCLUDED
+#ifndef empty_task_H_ALREADY_INCLUDED
+#define empty_task_H_ALREADY_INCLUDED
 
 #include <cnc/cnc.h>
 #include <cnc/debug.h>
 
 // Forward declaration of the context class (also known as graph)
-struct fib_context;
+struct empty_context;
 
 // The step classes
-
-struct fib_step
+struct empty_step
 {
-    int execute( const int & t, fib_context & c ) const;
+    int execute(const int &tag, empty_context &context) const;
 };
 
 // The context class
-struct fib_context : public CnC::context< fib_context >
+struct empty_context : public CnC::context<empty_context>
 {
     // step collections
-    CnC::step_collection< fib_step > m_steps;
-    // Item collections
-    CnC::item_collection< int, fib_type > m_fibs;
+    CnC::step_collection<empty_step> steps;
     // Tag collections
-    CnC::tag_collection< int > m_tags;
+    CnC::tag_collection<int> tags;
 
     // The context class constructor
-    fib_context()
-        : CnC::context< fib_context >(),
+    empty_context() : CnC::context<empty_context>(),
           // Initialize each step collection
-          m_steps( *this ),
-          // Initialize each item collection
-          m_fibs( *this ),
+          steps(*this),
           // Initialize each tag collection
-          m_tags( *this )
+          tags(*this)
     {
         // Prescriptive relations
-        m_tags.prescribes( m_steps, *this );
-        // Consumer relations
-        m_steps.consumes( m_fibs );
-        // Producer relations
-        m_steps.produces( m_fibs );
+        tags.prescribes(steps, *this);
     }
 };
 
-#endif // fib_H_ALREADY_INCLUDED
+#endif // empty_task_H_ALREADY_INCLUDED
